@@ -97,7 +97,7 @@ public class BerkeleyMaster
 		//socket.close();
     }
 
-    public static ArrayList<Long> adjustClocks(long masterTime, ArrayList<Long> slaveClockList) {
+    public static ArrayList<Long> adjustClocks(long masterTime, Slave[] slaveList) {
         ArrayList<Long> adjustList = new ArrayList<>();
         
         long totalDiff = 0;
@@ -105,8 +105,8 @@ public class BerkeleyMaster
 
         // Adiciona diferencas para adjustList e soma os valores que nao ultrapassam o limite
         // na a variavel totalDiff, contando eles em counter
-        for(int i=0; i<slaveClockList.size(); i++) {
-            long curDiff = slaveClockList.get(i) - masterTime;
+        for(int i=0; i<slaveList.length; i++) {
+            long curDiff = slaveList[i].time - masterTime;
             adjustList.add(curDiff);
 
             if(curDiff < maxDelay) {
@@ -120,13 +120,15 @@ public class BerkeleyMaster
         // Calcula media dos valores validos
         long averageDiff = totalDiff/counter;
 
+        // Adiciona o mestre ao final da lista
+        adjustList.add(new Long(0));
+
         // Calcula os ajustes de cada relogio com base na media
         for(int i=0; i<adjustList.size(); i++) {
             // Ajuste = media - (diferenca para o tempo mestre)
             adjustList.set(i,(averageDiff - adjustList.get(i)));
         }
 
-        // Lembrar: Mestre sempre adiciona a media em seu proprio relogio
         return adjustList;
     }
 }

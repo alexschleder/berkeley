@@ -63,7 +63,7 @@ public class BerkeleySlave
             DatagramPacket masterResponsePacket = new DatagramPacket(masterResponse,masterResponse.length);
             socket.setSoTimeout(0);
             socket.receive(masterResponsePacket);
-            String masterResponseString = new String(requestPacket.getData(),0,requestPacket.getLength());
+            String masterResponseString = new String(masterResponsePacket.getData(),0,masterResponsePacket.getLength());
             System.out.println("Response from master: " + masterResponseString);
             String[] masterDataSplit = masterResponseString.split("\\s");
 

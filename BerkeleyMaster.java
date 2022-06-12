@@ -58,7 +58,8 @@ public class BerkeleyMaster
                     //Insere as informações recebidas no slavesInfo[i]
                     int pid = Integer.parseInt(vars[0]);
                     long responseTimestamp = Long.parseLong(vars[1]);
-                    long delay = responseTimestamp - timestamp + Long.parseLong(vars[2]);
+                    long delay = timestamp - responseTimestamp + Long.parseLong(vars[2]);
+                    //System.out.println("    vars[2] : "+Long.parseLong(vars[2]));
 
                     Slave slave = new Slave(pid, responseTimestamp, delay);
                     slavesInfo[i] = slave;
@@ -79,6 +80,8 @@ public class BerkeleyMaster
                 response = responseString.getBytes();
                 DatagramPacket responsePacket = new DatagramPacket(response,response.length, grupo, port);
                 socket.send(responsePacket);
+
+                time.addToTime(adjustments.get(adjustments.size()-1));
 
                 Thread.sleep(30000);
             }
@@ -119,15 +122,21 @@ public class BerkeleyMaster
         // fazer print dps
         // Calcula media dos valores validos
         long averageDiff = totalDiff/counter;
+        
+        System.out.println("Calculated average: " + averageDiff);
 
         // Adiciona o mestre ao final da lista
         adjustList.add(new Long(0));
 
         // Calcula os ajustes de cada relogio com base na media
-        for(int i=0; i<adjustList.size(); i++) {
+        for(int i=0; i<adjustList.size()-1; i++) {
             // Ajuste = media - (diferenca para o tempo mestre)
-            adjustList.set(i,(averageDiff - adjustList.get(i)));
+            adjustList.set(i,(averageDiff - adjustList.get(i) + slaveList[i].delay));
+
+            System.out.println("   slave " + i + ": " + slaveList[i].delay);
         }
+        // Adiciona ajuste do mestre
+        adjustList.set(adjustList.size()-1,(averageDiff - adjustList.get(adjustList.size()-1)));
 
         return adjustList;
     }

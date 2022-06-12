@@ -7,7 +7,7 @@ public class Clock extends Thread
         this.time = time;
     }
 
-    public void Run()
+    public void run()
     {
         while(true)
         {

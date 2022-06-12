@@ -18,7 +18,7 @@ public class BerkeleyMaster
 		}
 
         String host = args[1];
-        InetAddress grupo = InetAddress.getByName("224.0.0.1");
+        InetAddress grupo = InetAddress.getByName("225.0.0.0");
         int port = Integer.parseInt(args[2]);
         int processQuantity = Integer.parseInt(args[3]);
 
@@ -35,9 +35,12 @@ public class BerkeleyMaster
         {
             while(true)
             {
+                String requestString = host + " " + (port + 1);
                 byte[] request = new byte[1024];
-                request = host.getBytes();
+                request = requestString.getBytes();
                 DatagramPacket requestPacket = new DatagramPacket(request,request.length, grupo, port);
+                System.out.println("Request sent: " + requestString);
+                socket.send(requestPacket);
 
                 long timestamp = time.getTime();
                 System.out.println("Begin at: " + timestamp);

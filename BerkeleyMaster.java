@@ -64,9 +64,15 @@ public class BerkeleyMaster
                     slavesInfo[i] = slave;
                 }
                 //Chama a função para calcular os tempos a serem somados
-                
-                //Cria o pacote no formado pid1:tempo1, pid2:tempo2... pidN:tempoN
+                ArrayList<Long> adjustments = adjustClocks(timestamp, slavesInfo);
+                //Cria o pacote no formado pid1:tempo1 pid2:tempo2 ... pidN:tempoN
                 String responseString = "";
+
+                for (int i = 0; i < adjustments.size() -1; i++)
+                {
+                    responseString += slavesInfo[i].pid + ":" + adjustments.get(i) + " "; 
+                }
+
                 System.out.println("Response to slaves: " + responseString);
                 //manda o pacote em multicast
                 byte[] response = new byte[2048];
@@ -74,7 +80,7 @@ public class BerkeleyMaster
                 DatagramPacket responsePacket = new DatagramPacket(response,response.length, grupo, port);
                 socket.send(responsePacket);
 
-                Thread.sleep(3000);
+                Thread.sleep(30000);
             }
         } 
 

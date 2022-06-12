@@ -1,3 +1,4 @@
+import java.util.*;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -6,6 +7,7 @@ import java.net.MulticastSocket;
 
 public class BerkeleyMaster 
 {
+    static long maxDelay;
 
     public static void main (String [] args)  throws IOException
     {
@@ -84,6 +86,24 @@ public class BerkeleyMaster
 		
 		//socket.leaveGroup(grupo);
 		//socket.close();
+    }
+
+    public static long averageDiff(long masterTime, ArrayList<Long> slaveClockList) {
+        long totalDiff = 0;
+
+        for(int i=0; i<slaveClockList.size(); i++) {
+            if(slaveClockList.get(i) < maxDelay)
+                totalDiff += slaveClockList.get(i) - masterTime;
+        }
+
+        // fazer print dps
+
+        return totalDiff/slaveClockList.size();
+    }
+
+    public static void adjustClocks(long averageDiff) {
+        
+        // fazer print dps
     }
 
 }

@@ -30,4 +30,8 @@ public class Clock extends Thread
         return time;
     }
 
+    public void addToTime(long offset)
+    {
+        time += offset;
+    }
 }

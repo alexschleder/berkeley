@@ -16,7 +16,7 @@ public class BerkeleySlave
 
         int id = Integer.parseInt(args[0]);
         String host = args[1];
-        InetAddress grupo = InetAddress.getByName("224.0.0.1");
+        InetAddress grupo = InetAddress.getByName("225.0.0.0");
         int port = Integer.parseInt(args[2]);
         int ptime = Integer.parseInt(args[3]);
         long adelay = Long.parseLong(args[4]);
@@ -32,10 +32,13 @@ public class BerkeleySlave
         {
             byte[] request = new byte[1024];
             DatagramPacket requestPacket = new DatagramPacket(request,request.length);
-            socket.setSoTimeout(500);
+            socket.setSoTimeout(0);
+            System.out.println("Waiting for master request...");
             socket.receive(requestPacket);
             String recebido = new String(requestPacket.getData(),0,requestPacket.getLength());
-            InetAddress masterAddress = InetAddress.getByName(recebido);
+            String recebidoSplit[] = recebido.split("\\s");
+            InetAddress masterAddress = InetAddress.getByName(recebidoSplit[0]);
+            int portToSend = Integer.parseInt(recebidoSplit[1]);
             System.out.println("Received: " + recebido);
 
             try
@@ -53,7 +56,7 @@ public class BerkeleySlave
             byte[] response = new byte[1024];
             response = responseString.getBytes();
             //TODO: Mudar porta para porta do master
-            DatagramPacket responsePacket = new DatagramPacket(response,response.length, masterAddress, port+1);
+            DatagramPacket responsePacket = new DatagramPacket(response,response.length, masterAddress, portToSend);
             uniSocket.send(responsePacket);
 
             byte[] masterResponse = new byte[1024];
